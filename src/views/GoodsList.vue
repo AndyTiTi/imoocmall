@@ -34,11 +34,11 @@
               <ul>
                 <li v-for="item in goodsList">
                   <div class="pic">
-                    <a href="#"><img :src="'/static/img/'+item.productImage" alt=""></a>
+                    <a href="#"><img v-lazy="'/static/img/'+item.productImage"></a>
                   </div>
                   <div class="main">
-                    <div class="name">{{item.salePrice}}</div>
-                    <div class="price">{{item.productName}}</div>
+                    <div class="name">{{item.productName}}</div>
+                    <div class="price">{{item.salePrice}}</div>
                     <div class="btn-area">
                       <a href="javascript:;" class="btn btn--m">加入购物车</a>
                     </div>
@@ -96,9 +96,10 @@
       },
       getGoodsList() {
         axios.get('/goods').then((result) => {
+          console.log(result)
           var res = result.data.result;
           if (res) {
-            this.goodsList = res;
+            this.goodsList = res.list;
           } else {
             throw new Error('database error!')
           }
