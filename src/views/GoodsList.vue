@@ -9,7 +9,7 @@
         <div class="filter-nav">
           <span class="sortby">Sort by:</span>
           <a href="javascript:void(0)" class="default cur">Default</a>
-          <a href="javascript:void(0)" class="price">Price
+          <a href="javascript:void(0)" class="price" @click="sortGoods">Price
             <svg class="icon icon-arrow-short">
               <use xlink:href="#icon-arrow-short"></use>
             </svg>
@@ -21,9 +21,10 @@
           <div class="filter" id="filter" :class="{'filterby-show':showFilter}">
             <dl class="filter-price">
               <dt>Price:</dt>
-              <dd><a href="javascript:void(0)" :class="{'cur':priceChecked=='all'}" @click="priceChoose(-1)">All</a></dd>
+              <dd><a href="javascript:void(0)" :class="{'cur':priceChecked=='all'}" @click="setPriceFilter(-1)">All</a>
+              </dd>
               <dd v-for="(item,index) in priceFilter">
-                <a href="javascript:void(0)" :class="{'cur':priceChecked==index}" @click="priceChoose(index)">{{item.startPrice}}
+                <a href="javascript:void(0)" :class="{'cur':priceChecked==index}" @click="setPriceFilter(index)">{{item.startPrice}}
                   - {{item.endPrice}}</a>
               </dd>
             </dl>
@@ -40,11 +41,14 @@
                     <div class="name">{{item.productName}}</div>
                     <div class="price">{{item.salePrice}}</div>
                     <div class="btn-area">
-                      <a href="javascript:;" class="btn btn--m">加入购物车</a>
+                      <a href="javascript:;" class="btn btn--m" @click="addCart(item.productId)">加入购物车</a>
                     </div>
                   </div>
                 </li>
               </ul>
+              <div v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="30" class="load-more">
+                <img src="/static/loading-svg/loading-spin.svg" v-show="loading">
+              </div>
             </div>
           </div>
         </div>
@@ -67,8 +71,8 @@
     data() {
       return {
         goodsList: [],
-        showFilter:false,
-        showMask:false,
+        showFilter: false,
+        showMask: false,
         priceFilter: [
           {startPrice: 0, endPrice: 100},
           {startPrice: 100, endPrice: 500},
@@ -76,34 +80,82 @@
           {startPrice: 1000, endPrice: 2000},
           {startPrice: 2000, endPrice: 5000}
         ],
-        priceChecked: 'all'
+        priceChecked: 'all',
+        sortFlag: true,
+        page: 1,
+        pageSize: 8,
+        busy:true,
+        loading:false
       }
     },
     mounted: function () {
       this.getGoodsList();
     },
     methods: {
-      priceChoose(index){
-        if(index==-1){
-          this.priceChecked='all'
-        }else{
-          this.priceChecked=index
+      setPriceFilter(index) {
+        if (index == -1) {
+          this.priceChecked = 'all'
+        } else {
+          this.priceChecked = index
         }
-        this.showFilter=false;
+        this.showFilter = false;
+        this.page=1;
+        this.getGoodsList();
       },
-      showFilterFn(){
-        this.showFilter=true;
+      showFilterFn() {
+        this.showFilter = true;
       },
-      getGoodsList() {
-        axios.get('/goods').then((result) => {
-          console.log(result)
-          var res = result.data.result;
-          if (res) {
-            this.goodsList = res.list;
+      addCart(productId){
+        axios.post('/goods/addCart',{
+          productId:productId
+        }).then((result)=> {
+          var res=result.data;
+          if(res.status=='0'){
+            alert('success')
+          }else{
+            alert('fail')
+          }
+        })
+      },
+      getGoodsList(flag) {
+        var param = {
+          page: this.page,
+          pageSize: this.pageSize,
+          sort: this.sortFlag ? 1 : -1,
+          priceLevel:this.priceChecked
+        };
+        this.loading=true;
+        axios.get('/goods', {params: param}).then((result) => {
+          var res = result.data;
+          this.loading=true;
+          if (res.status=='0') {
+            if(flag){
+              this.goodsList = this.goodsList.concat(res.result.list);
+              if(res.result.count==0){
+                this.busy=true;
+              }else{
+                this.busy=false;
+              }
+            }else{
+              this.goodsList = res.result.list;
+              this.busy=false;
+            }
           } else {
-            throw new Error('database error!')
+            this.goodsList =[];
           }
         });
+      },
+      sortGoods() {
+        this.sortFlag = !this.sortFlag;
+        this.page = 1;
+        this.getGoodsList();
+      },
+      loadMore(){
+        this.busy=true;
+        setTimeout(()=>{
+          this.page++;
+          this.getGoodsList(true);
+        },500)
       }
     },
     components: {
@@ -113,3 +165,10 @@
     }
   }
 </script>
+<style>
+  .load-more{
+    height: 100px;
+    line-height: 100px;
+    text-align: center;
+  }
+</style>

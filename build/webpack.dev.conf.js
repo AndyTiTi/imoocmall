@@ -13,7 +13,6 @@ const express = require('express')
 const app = express();
 const router = express.Router();
 app.use('/',router);
-const goodsData = require('./../mock/goods.json')
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
 
