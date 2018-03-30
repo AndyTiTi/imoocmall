@@ -2,38 +2,37 @@ var express = require('express');
 var router = express.Router();
 var User = require('./../models/users')
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', function (req, res, next) {
   res.send('respond with a resource');
 });
-
-router.post('/login',function(req,res,next){
+router.post('/login', function (req, res, next) {
   var param = {
-    userName:req.body.userName,
-    userPwd:req.body.userPwd
+    userName: req.body.userName,
+    userPwd: req.body.userPwd
   }
-  User.findOne(param,function(err,doc){
-    if(err){
+  User.findOne(param, function (err, doc) {
+    if (err) {
       res.json({
-        status:'1',
-        msg:err.message
+        status: '1',
+        msg: err.message
       })
-    }else{
-      if(doc){
-        res.cookie('userId',doc.userId,{
-          path:'/',
-          maxAge:1000*60*60
+    } else {
+      if (doc) {
+        res.cookie('userId', doc.userId, {
+          path: '/',
+          maxAge: 1000 * 60 * 60
         });
-        res.cookie('userName',doc.userName,{
-          path:'/',
-          maxAge:1000*60*60
+        res.cookie('userName', doc.userName, {
+          path: '/',
+          maxAge: 1000 * 60 * 60
         });
         // req.session.user=doc;
         res.json({
-          status:'0',
-          msg:'',
-          result:{
-            userName:doc.userName,
-            userPwd:doc.userPwd
+          status: '0',
+          msg: '',
+          result: {
+            userName: doc.userName,
+            userPwd: doc.userPwd
           }
         })
       }
@@ -41,30 +40,135 @@ router.post('/login',function(req,res,next){
   })
 })
 //登出接口
-router.post('/logout',function(req,res,next){
-  res.clearCookie('userId',{
-    path:'/',
-    maxAge:-1
+router.post('/logout', function (req, res, next) {
+  res.clearCookie('userId', {
+    path: '/',
+    maxAge: -1
   });
   res.json({
-    status:'0',
-    msg:'',
-    result:''
+    status: '0',
+    msg: '',
+    result: ''
   })
 });
-router.get('/checkLogin',function(req,res,next){
-  if(req.cookies.userId){
+router.get('/checkLogin', function (req, res, next) {
+  if (req.cookies.userId) {
     res.json({
-      status:'0',
-      msg:'',
-      result:req.cookies.userName
+      status: '0',
+      msg: '',
+      result: req.cookies.userName
     })
-  }else{
+  } else {
     res.json({
-      status:'1',
-      msg:'未登录！',
-      result:''
+      status: '1',
+      msg: '未登录！',
+      result: ''
     })
   }
+});
+//查询当前用户购物车数据
+router.get('/cartList', function (req, res, next) {
+  var userId = req.cookies.userId;
+  User.findOne({userId: userId}, function (err, doc) {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message
+      })
+    } else {
+      if (doc) {
+        res.json({
+          status: '0',
+          msg: '',
+          result: doc.cartList,
+        })
+      }
+    }
+  })
+});
+//购物车删除
+router.post('/cartDel', function (req, res, next) {
+  var userId = req.cookies.userId, productId = req.body.productId;
+  User.update({
+    userId: userId
+  }, {
+    $pull: {
+      'cartList': {
+        'productId': productId
+      }
+    }
+  }, function (err, doc) {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      })
+    } else {
+      res.json({
+        status: '0',
+        msg: '',
+        result: 'success',
+      })
+    }
+  });
+});
+//修改商品数量
+router.post('/cartEdit', function (req, res, next) {
+  var userId = req.cookies.userId, productNum = req.body.productNum, productId = req.body.productId,
+    checked = req.body.checked;
+  User.update({"userId": userId, 'cartList.productId': productId}, {
+    "cartList.$.productNum": productNum,
+    "cartList.$.checked": checked
+  }, function (err, doc) {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      })
+    } else {
+      res.json({
+        status: '0',
+        msg: '',
+        result: 'success',
+      })
+    }
+  });
+});
+
+router.post('/editCheckAll', function (req, res, next) {
+  var userId = req.cookies.userId,
+    checkAll = req.body.checkAll ? '1' : '0';
+  User.findOne({"userId": userId}, function (err, user) {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      })
+    } else {
+      if (user) {
+        user.cartList.forEach((item) => {
+          item.checked = checkAll;
+        });
+        user.save(function (err1, doc) {
+          if (err1) {
+            res.json({
+              status: '1',
+              msg: err.message,
+              result: ''
+            });
+          } else {
+            res.json({
+              status: '0',
+              msg: '',
+              result: 'success',
+            })
+          }
+        })
+      }
+    }
+  })
 })
 module.exports = router;
