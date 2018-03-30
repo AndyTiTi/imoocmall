@@ -10,8 +10,31 @@
           <span class="sortby">Sort by:</span>
           <a href="javascript:void(0)" class="default cur">Default</a>
           <a href="javascript:void(0)" class="price" @click="sortGoods">Price
-            <svg class="icon icon-arrow-short">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-arrow-short" :class="{'sort-up': !sortFlag}" fill="black">
               <use xlink:href="#icon-arrow-short"></use>
+            </svg>
+            <svg width="11" height="11" xmlns="http://www.w3.org/2000/svg">
+              <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+              <defs>
+                <filter height="200%" width="200%" y="-50%" x="-50%" id="svg_1_blur">
+                  <feGaussianBlur stdDeviation="0" in="SourceGraphic"/>
+                </filter>
+                <radialGradient gradientTransform="rotate(36.620689655172406,0.5,0.5) translate(0,0.3275862068965517) scale(1,0.3448275862068966)" r="2.017591" cy="0.5" cx="0.5" spreadMethod="pad" id="svg_6">
+                  <stop offset="0" stop-color="#000000"/>
+                  <stop offset="1" stop-color="#ffffff"/>
+                </radialGradient>
+              </defs>
+              <g>
+                <title>background</title>
+                <rect fill="#fff" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
+                <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+                  <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+                </g>
+              </g>
+              <g>
+                <title>Layer 1</title>
+                <path filter="url(#svg_1_blur)" opacity="0.42" stroke="#fff" transform="rotate(89.8485336303711 290.060546875,200.02349853515628) " id="svg_1" d="m272.741147,246.697411l60.406953,-28.827998l-116.793895,0l-116.79364,0l0,-17.845896l0,-17.845915l115.453781,0c63.49949,0 115.453691,-0.904515 115.453691,-2.01004c0,-1.1055 -25.278948,-14.078105 -56.175374,-28.827992l-56.175553,-26.817983l51.923376,0l51.923185,0l79.298463,37.78712l79.298425,37.787102l-79.450543,37.714803l-79.450517,37.714803l-54.662685,0l-54.662813,0l60.407119,-28.82801l0.000026,0.000006z" stroke-width="1.5" fill="url(#svg_6)"/>
+              </g>
             </svg>
           </a>
           <a href="javascript:void(0)" class="filterby" @click="showFilterFn">Filter by</a>
@@ -35,7 +58,7 @@
               <ul>
                 <li v-for="item in goodsList">
                   <div class="pic">
-                    <a href="#"><img v-lazy="'/static/img/'+item.productImage"></a>
+                    <a href="#"><img v-lazy="'/static/'+item.productImage"></a>
                   </div>
                   <div class="main">
                     <div class="name">{{item.productName}}</div>
@@ -111,9 +134,9 @@
         }).then((result)=> {
           var res=result.data;
           if(res.status=='0'){
-            alert('success')
+            alert('加入成功！')
           }else{
-            alert('fail')
+            alert(res.msg);
           }
         })
       },
@@ -125,7 +148,7 @@
           priceLevel:this.priceChecked
         };
         this.loading=true;
-        axios.get('/goods', {params: param}).then((result) => {
+        axios.get('/goods/list', {params: param}).then((result) => {
           var res = result.data;
           this.loading=true;
           if (res.status=='0') {
