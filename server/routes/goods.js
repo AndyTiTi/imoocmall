@@ -13,7 +13,7 @@ mongoose.connection.on('error', function () {
 mongoose.connection.on('disconnected', function () {
   console.log('db disconnected');
 });
-router.get('/', function (req, res, next) {
+router.get('/list', function (req, res, next) {
   var page = parseInt(req.query.page);
   var pageSize = parseInt(req.query.pageSize);
   var sort = req.query.sort;
