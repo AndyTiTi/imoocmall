@@ -158,6 +158,7 @@
           var res=result.data;
           if(res.status=='0'){
             this.mdShowCart = true;
+            this.$store.commit('updateCartCount',1)
           }else{
             this.mdShow = true;
           }
@@ -173,7 +174,6 @@
         this.loading=true;
         axios.get('/goods/list', {params: param}).then((result) => {
           var res = result.data;
-          this.loading=true;
           if (res.status=='0') {
             if(flag){
               this.goodsList = this.goodsList.concat(res.result.list);
@@ -189,6 +189,7 @@
           } else {
             this.goodsList =[];
           }
+          this.loading = false;
         });
       },
       sortGoods() {
