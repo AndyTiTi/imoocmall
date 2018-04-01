@@ -36,6 +36,12 @@ router.post('/login', function (req, res, next) {
             userPwd: doc.userPwd
           }
         })
+      }else{
+        res.json({
+          status: '1',
+          msg: '账号密码错误!',
+          result:''
+        })
       }
     }
   })

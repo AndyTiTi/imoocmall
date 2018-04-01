@@ -87,7 +87,8 @@
                     </a>
                   </div>
                   <div class="addr-opration addr-set-default">
-                    <a href="javascript:;" class="addr-set-default-btn" v-if="!item.isDefault" @click="setDefault(item.addressId)"><i>Set default</i></a>
+                    <a href="javascript:;" class="addr-set-default-btn" v-if="!item.isDefault"
+                       @click="setDefault(item.addressId)"><i>Set default</i></a>
                   </div>
                   <div class="addr-opration addr-default" v-if="item.isDefault">Default address</div>
                 </li>
@@ -148,6 +149,12 @@
         <a href="javascript:;" class="btn btn--m" @click="isMdShow =false">取消</a>
       </div>
     </modal>
+    <modal :mdShow="delAddr" @close="closeModal">
+      <p slot="message">地址不能全部删除?</p>
+      <div slot="btnGroup">
+        <a href="javascript:;" class="btn btn--m" @click="delAddr = false">知道了</a>
+      </div>
+    </modal>
     <nav-footer></nav-footer>
   </div>
 </template>
@@ -167,6 +174,7 @@
         isMdShow: false,
         checkIndex: '',
         selectedAddrId: '',
+        delAddr: false,
         addressId: ''
       }
     },
@@ -215,8 +223,12 @@
         this.isMdShow = false;
       },
       delAddressConfirm(addressId) {
-        this.isMdShow = true;
-        this.addressId = addressId;
+        if (this.addressList.length > 1) {
+          this.isMdShow = true;
+          this.addressId = addressId;
+        } else {
+          this.delAddr = true;
+        }
       },
       delAddress() {
         axios.post('/users/delAddress', {addressId: this.addressId}).then((response) => {
