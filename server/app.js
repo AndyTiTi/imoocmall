@@ -1,21 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-// var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var ejs = require('ejs');
-var indexRouter = require('./routes/index');
-var users = require('./routes/users');
-var goods = require('./routes/goods');
-
-var app = express();
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const cookieSession = require('cookie-session');
+const logger = require('morgan');
+const ejs = require('ejs');
+const indexRouter = require('./routes/index');
+const users = require('./routes/users');
+const goods = require('./routes/goods');
+const admin = require('./routes/admin');
+const static = require('express-static');
+const multer = require('multer');
+const multerObj = multer({dest:'./static/upload'});
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.html', ejs.__express);
 app.set('view engine', 'html');
-
+// app.use(multerObj.any());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
@@ -27,7 +30,7 @@ app.use(function (req, res, next) {
   if (req.cookies.userId) {
     next();
   } else {
-    if (req.originalUrl == '/users/login' || req.originalUrl == '/users/logout' || req.path == '/goods/list') {
+    if (req.originalUrl == '/users/login' || req.originalUrl == '/users/logout' || req.path == '/goods/list'||req.originalUrl == '/admin/login') {
       next();
     } else {
       res.json({
@@ -40,6 +43,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/', indexRouter);
+app.use('/admin', admin);
 app.use('/users', users);
 app.use('/goods', goods);
 

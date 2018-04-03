@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import GoodsList from '@/views/GoodsList'
 import Cart from '@/views/Cart'
 import Address from '@/views/Address'
+import Admin from '@/views/Admin'
 import OrderConfirm from '@/views/OrderConfirm'
 import OrderSuccess from '@/views/OrderSuccess'
 
@@ -35,6 +36,11 @@ export default new Router({
       path: '/orderSuccess',
       name:'OrderSuccess',
       component: OrderSuccess
+    },
+    {
+      path: '/admin',
+      name:'Admin',
+      component: Admin
     }
   ]
 })
