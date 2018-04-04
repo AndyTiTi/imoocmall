@@ -8,14 +8,15 @@ import VueLazyLoad from 'vue-lazyload'
 import infiniteScroll from 'vue-infinite-scroll'
 import {currency} from './util/currency'
 import Element from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css';
+// import 'element-ui/lib/theme-chalk/index.css';
+import './assets/css/theme-green/index.css';
 import "babel-polyfill"
 
 Vue.config.productionTip = false;
 Vue.use(VueLazyLoad, {
   loading: '/static/loading-svg/loading-bars.svg'
 });
-Vue.use(Element)
+Vue.use(Element);
 Vue.filter('currency', currency);
 Vue.use(infiniteScroll);
 Vue.use(Vuex);

@@ -60,6 +60,7 @@
         }).then((response) => {
           let res = response.data;
           if (res.status == "0") {
+            this.$router.push('/home');
             this.errorTip = false;
             this.loginModalFlag = false;
           } else {
