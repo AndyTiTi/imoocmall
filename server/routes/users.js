@@ -272,7 +272,7 @@ router.post('/addAddress', function (req, res, next) {
         if (err1) {
           res.json({
             status: '1',
-            msg: err.message,
+            msg: err1.message,
             result: ''
           })
         } else {
