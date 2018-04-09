@@ -54,7 +54,7 @@
       <div class="md-modal-inner">
         <div class="md-top">
           <div class="md-title">Login in</div>
-          <button class="md-close" @click="loginModalFlag=false">Close</button>
+          <button class="md-close" @click="closeModal">Close</button>
         </div>
         <div class="md-content">
           <div class="confirm-tips">
@@ -81,7 +81,7 @@
         </div>
       </div>
     </div>
-    <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+    <div class="md-overlay" v-if="loginModalFlag" @click="closeModal"></div>
   </header>
 </template>
 
@@ -113,6 +113,12 @@
       // }
     },
     methods: {
+      closeModal(){
+        this.loginModalFlag=false;
+        this.userName= '';
+        this.userPwd= '';
+
+      },
       checkLogin() {
         axios.get('/users/checkLogin').then((response) => {
           let res = response.data;
