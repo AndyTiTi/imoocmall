@@ -8,6 +8,7 @@
         <div class="md-content">
           <span class="item-label tsl">所在地区 <i>*</i></span>
           <city-select v-model="cityInfo"></city-select>
+          <input type="hidden" v-model="cityName" ref="cityName">
           <div class="item item-postcode">
             <span class="item-label tsl">详细地址 <i>*</i></span>
             <div class="ks-combobox-input-wrap">
@@ -16,22 +17,22 @@
           </div>
           <div class="item item-postcode">
             <span class="item-label tsl" data-phase-id="d_p_postCode">邮政编码 </span>
-            <input name="post" maxlength="16" v-model="postCode" type="text">
+            <input maxlength="16" ref="postCode" type="text">
           </div>
           <div class="item item-name" id="J_ItemName">
             <span class="item-label tsl">收货人姓名 <i>*</i></span>
-            <input name="fullName" v-model="userName" class="" type="text">
+            <input ref="userName" class="" type="text">
           </div>
           <div class="item item-mobile" id="J_ItemMobile">
             <span class="item-label tsl">手机号码 </span>
-            <input name="mobile" class="" v-model="tel" type="text">
+            <input ref="tel" type="text">
           </div>
           <div class="item item-phone">
             <span class="item-label tsl">电话号码 </span>
-            <input name="phoneCode" maxlength="10" type="text">
+            <input maxlength="10" type="text">
           </div>
           <div class="" id="itemSetDefault">
-            <input type="checkbox" id="setDefault" @click="this.isDefault = !this.isDefault"><label for="setDefault">设置为默认收货地址</label>
+            <input type="checkbox" id="setDefault" ref="isDefault"><label for="setDefault">设置为默认收货地址</label>
           </div>
           <div class="btn-wrap">
             <a href="javascript:;" class="btn btn--m" @click="addAddressSubmit">确认</a>
@@ -47,13 +48,9 @@
   import CitySelect from './CitySelect'
   import axios from 'axios'
   export default {
-    data(){
+    data() {
       return {
-        streetName:'',
-        userName:'',
-        isDefault:false,
-        postCode:'',
-        tel:''
+        cityInfo: ''
       }
     },
     props: ['mdShow'],
@@ -66,11 +63,11 @@
         var addressId = randomId.substring(7);
         axios.post('/users/addAddress', {
           addressId: addressId,
-          streetName:this.streetName,
-          userName:this.userName,
-          isDefault:this.isDefault,
-          postCode:this.postCode,
-          tel:this.tel
+          streetName:this.$refs.cityName.value,
+          userName:this.$refs.userName.value,
+          isDefault:false,
+          postCode:this.$refs.postCode.value,
+          tel:this.$refs.tel.value
         }).then((response) => {
           let res = response.data;
           if (res.status == '0') {
@@ -78,11 +75,6 @@
             this.$emit('ievent');
           }
         })
-      }
-    },
-    data() {
-      return {
-        cityInfo: '',
       }
     },
     components: {
@@ -94,8 +86,7 @@
         this.cityInfo.province && names.push(this.cityInfo.province.name + ' ');
         this.cityInfo.city && names.push(this.cityInfo.city.name + ' ');
         this.cityInfo.block && names.push(this.cityInfo.block.name + ' ');
-        this.streetName = names.join('');
-        return this.streetName;
+        return names.join('');
       }
     }
   }
