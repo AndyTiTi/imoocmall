@@ -41,7 +41,7 @@
           <a href="javascript:void(0)" class="navbar-link" @click="logOut" v-if="nickName">Logout</a>
           <div class="navbar-cart-container">
             <a class="navbar-link navbar-cart-link" href="/cart">
-              <span class="navbar-cart-count" v-if="cartCount>0">{{cartCount}}</span>
+              <span class="navbar-cart-count" v-if="cartCount>0&&showCount">{{cartCount}}</span>
               <svg class="navbar-cart-logo">
                 <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
               </svg>
@@ -96,7 +96,8 @@
         userName: '',
         userPwd: '',
         errorTip: false,
-        loginModalFlag: false
+        loginModalFlag: false,
+        showCount:false
       }
     },
     mounted() {
@@ -138,13 +139,16 @@
             this.loginModalFlag = false;
             this.$store.commit('updateUserInfo', res.result.userName);
             this.getCartCount();
+            this.showCount=true;
           } else {
             this.errorTip = true;
+            this.showCount=false;
           }
         })
       }
       ,
       logOut() {
+        this.showCount=false;
         axios.post('/users/logout').then((response) => {
           let res = response.data;
           if (res.status == '0') {

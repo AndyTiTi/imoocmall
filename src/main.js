@@ -15,7 +15,8 @@ Vue.config.productionTip = false;
 Vue.use(VueLazyLoad, {
   loading: '/static/loading-svg/loading-bars.svg'
 });
-Vue.use(Element)
+//working stash
+Vue.use(Element);
 Vue.filter('currency', currency);
 Vue.use(infiniteScroll);
 Vue.use(Vuex);
