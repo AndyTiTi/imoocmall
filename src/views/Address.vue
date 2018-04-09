@@ -92,7 +92,7 @@
                   </div>
                   <div class="addr-opration addr-default" v-if="item.isDefault">Default address</div>
                 </li>
-                <li class="addr-new">
+                <li class="addr-new" @click="addAddress">
                   <div class="add-new-inner">
                     <i class="icon-add">
                       <svg class="icon icon-add">
@@ -155,6 +155,7 @@
         <a href="javascript:;" class="btn btn--m" @click="delAddr = false">知道了</a>
       </div>
     </modal>
+    <address-modal :mdShow="mdShowAddress" @close="closeModal" @ievent = "ievent"></address-modal>
     <nav-footer></nav-footer>
   </div>
 </template>
@@ -163,6 +164,7 @@
   import NavHeader from '@/components/Header.vue'
   import NavBread from '@/components/Bread.vue'
   import Modal from '@/components/Modal.vue'
+  import AddressModal from '@/views/AddAddressModal.vue'
   import NavFooter from '@/components/Footer.vue'
   import axios from 'axios'
 
@@ -175,7 +177,9 @@
         checkIndex: '',
         selectedAddrId: '',
         delAddr: false,
-        addressId: ''
+        mdShowAddress: false,
+        addressId: '',
+        addAddressInfo:{}
       }
     },
     mounted() {
@@ -190,9 +194,16 @@
       NavHeader,
       NavBread,
       NavFooter,
+      AddressModal,
       Modal
     },
     methods: {
+      ievent(){
+        this.init();
+      },
+      addAddress(){
+        this.mdShowAddress = true;
+      },
       init() {
         axios.get('/users/addressList').then((response) => {
           let res = response.data;
@@ -221,6 +232,7 @@
       },
       closeModal() {
         this.isMdShow = false;
+        this.mdShowAddress = false;
       },
       delAddressConfirm(addressId) {
         if (this.addressList.length > 1) {

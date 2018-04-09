@@ -3,10 +3,9 @@ import Router from 'vue-router'
 import GoodsList from '@/views/GoodsList'
 import Cart from '@/views/Cart'
 import Address from '@/views/Address'
-import Admin from '@/views/Admin'
 import OrderConfirm from '@/views/OrderConfirm'
 import OrderSuccess from '@/views/OrderSuccess'
-import Home from '@/components/Home'
+import AddAddress from '@/views/AddAddressModal'
 
 Vue.use(Router);
 
@@ -15,27 +14,24 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name:'GoodsList',
       component: GoodsList
     },{
       path: '/cart',
-      name:'Cart',
       component: Cart
     },{
       path: '/address',
-      name:'Address',
       component: Address
     },{
       path: '/orderConfirm',
-      name:'OrderConfirm',
       component: OrderConfirm
     },{
       path: '/orderSuccess',
-      name:'OrderSuccess',
       component: OrderSuccess
     },{
+      path: '/addAddress',
+      component: AddAddress
+    },{
       path: '/home',
-      name:'Home',
       component:resolve => require(['@/components/Home.vue'], resolve),
       children: [{
           path: '/',
@@ -43,7 +39,6 @@ export default new Router({
         }]
     },{
       path: '/admin',
-      name:'Admin',
       component: resolve => require(['@/views/Admin.vue'], resolve)
     }
   ]

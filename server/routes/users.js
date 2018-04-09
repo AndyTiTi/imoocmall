@@ -36,11 +36,11 @@ router.post('/login', function (req, res, next) {
             userPwd: doc.userPwd
           }
         })
-      }else{
+      } else {
         res.json({
           status: '1',
           msg: '账号密码错误!',
-          result:''
+          result: ''
         })
       }
     }
@@ -242,6 +242,52 @@ router.post('/setDefault', function (req, res, next) {
     })
   }
 });
+//新增地址接口
+router.post('/addAddress', function (req, res, next) {
+  var userId = req.cookies.userId,
+    addressId = req.body.addressId,
+    streetName = req.body.streetName,
+    userName = req.body.userName,
+    isDefault =req.body.isDefault,
+    postCode =req.body.postCode,
+    tel = req.body.tel;
+  User.findOne({userId: userId}, function (err, doc) {
+    if (err) {
+      res.json({
+        status: '1',
+        msg: err.message,
+        result: ''
+      })
+    } else {
+      var address = {
+        addressId: addressId,
+        streetName: streetName,
+        userName: userName,
+        isDefault: isDefault,
+        postCode: postCode,
+        tel: tel
+      };
+      doc.addressList.push(address);
+      doc.save(function (err1, doc1) {
+        if (err1) {
+          res.json({
+            status: '1',
+            msg: err.message,
+            result: ''
+          })
+        } else {
+          res.json({
+            status: '0',
+            msg: '',
+            result: {
+              address: address
+            }
+          })
+        }
+      });
+    }
+  })
+});
 //删除地址接口
 router.post('/delAddress', function (req, res, next) {
   var userId = req.cookies.userId,
@@ -305,11 +351,11 @@ router.post('/payMent', function (req, res, next) {
         }
       });
       var platform = '622';
-      var r1=Math.floor(Math.random()*10);
-      var r2=Math.floor(Math.random()*10);
+      var r1 = Math.floor(Math.random() * 10);
+      var r2 = Math.floor(Math.random() * 10);
       var sysDate = new Date().Format('yyyyMMddhhmmss');
       var createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
-      var orderId = platform+r1+sysDate+r2;
+      var orderId = platform + r1 + sysDate + r2;
 
       var order = {
         orderId: orderId,
@@ -342,43 +388,43 @@ router.post('/payMent', function (req, res, next) {
   });
 });
 //根据订单Id查询订单信息
-router.get('/orderDetail',function(req,res,next){
+router.get('/orderDetail', function (req, res, next) {
   var userId = req.cookies.userId,
     orderId = req.query.orderId;
   console.log(orderId);
-  User.findOne({userId:userId},function(err,userInfo){
-    if(err){
+  User.findOne({userId: userId}, function (err, userInfo) {
+    if (err) {
       res.json({
         status: '1',
         msg: err.message,
         result: ''
       })
-    }else{
+    } else {
       var orderList = userInfo.orderList;
-      if(orderList.length>0){
+      if (orderList.length > 0) {
         var orderTotal = 0;
-        orderList.forEach((item)=>{
-          if(item.orderId==orderId){
-            orderTotal=item.orderTotal;
+        orderList.forEach((item) => {
+          if (item.orderId == orderId) {
+            orderTotal = item.orderTotal;
           }
         });
-        if(orderTotal>0){
+        if (orderTotal > 0) {
           res.json({
             status: '0',
             msg: '',
             result: {
-              orderId:orderId,
-              orderTotal:orderTotal
+              orderId: orderId,
+              orderTotal: orderTotal
             }
           })
-        }else{
+        } else {
           res.json({
             status: '120001',
             msg: '无此订单！',
             result: ''
           })
         }
-      }else{
+      } else {
         res.json({
           status: '120001',
           msg: '当前用户未创建订单！',
@@ -388,25 +434,25 @@ router.get('/orderDetail',function(req,res,next){
     }
   })
 })
-router.get('/getCartCount',function (req,res,next) {
-  if(req.cookies&&req.cookies.userId){
+router.get('/getCartCount', function (req, res, next) {
+  if (req.cookies && req.cookies.userId) {
     var userId = req.cookies.userId;
-    User.findOne({userId:userId},function (err,doc) {
-      if(err){
+    User.findOne({userId: userId}, function (err, doc) {
+      if (err) {
         res.json({
           status: '1',
           msg: err.message,
           result: ''
         })
-      }else{
+      } else {
         var carList = doc.cartList;
         let cartCount = 0;
-        carList.map(function(item){
+        carList.map(function (item) {
           cartCount += parseInt(item.productNum);
         });
         res.json({
           status: '0',
-          msg:'',
+          msg: '',
           result: cartCount
         })
       }

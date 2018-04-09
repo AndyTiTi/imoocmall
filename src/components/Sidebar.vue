@@ -3,7 +3,7 @@
         <el-menu class="el-menu-vertical-demo" unique-opened>
             <template v-for="item in items">
                 <template v-if="item.subs">
-                    <el-submenu>
+                    <el-submenu :index="item.index">
                         <template slot="title"><i :class="item.icon"></i>{{ item.title }}</template>
                         <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">{{ subItem.title }}
                         </el-menu-item>
