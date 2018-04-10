@@ -163,7 +163,7 @@ router.post('/editCheckAll', function (req, res, next) {
           if (err1) {
             res.json({
               status: '1',
-              msg: err.message,
+              msg: err1.message,
               result: ''
             });
           } else {
@@ -227,7 +227,7 @@ router.post('/setDefault', function (req, res, next) {
           if (err1) {
             res.json({
               status: '1',
-              msg: err.message,
+              msg: err1.message,
               result: ''
             });
           } else {
@@ -370,7 +370,7 @@ router.post('/payMent', function (req, res, next) {
         if (err1) {
           res.json({
             status: '1',
-            msg: err.message,
+            msg: err1.message,
             result: ''
           })
         } else {
