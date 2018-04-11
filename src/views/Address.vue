@@ -79,6 +79,13 @@
                     <dd class="address">{{item.streetName}}</dd>
                     <dd class="tel">{{item.tel}}</dd>
                   </dl>
+                  <div class="addr-opration addr-edit">
+                    <a href="javascript:;" class="addr-edit-btn" @click="addAddress">
+                      <svg class="icon icon-edit">
+                        <use xlink:href="#icon-edit"></use>
+                      </svg>
+                    </a>
+                  </div>
                   <div class="addr-opration addr-del">
                     <a href="javascript:;" class="addr-del-btn" @click="delAddressConfirm(item.addressId)">
                       <svg class="icon icon-del">
