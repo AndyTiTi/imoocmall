@@ -267,6 +267,13 @@ router.post('/addAddress', function (req, res, next) {
         postCode: postCode,
         tel: tel
       };
+      if(isDefault){
+        doc.addressList.forEach((item)=>{
+          if(item.isDefault){
+            item.isDefault=false;
+          }
+        })
+      }
       doc.addressList.push(address);
       doc.save(function (err1, doc1) {
         if (err1) {
